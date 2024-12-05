@@ -44,9 +44,25 @@ fn part_1(){
 fn part_2(){
     let input = "input.txt";
     let lines = read_lines(&input);
+
+    let mut valid_lines_count = 0;
+    for (idx, line) in lines.iter().enumerate(){
+        let line_split = line.split(" ");
+        let values: Vec<i32> = line_split.map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();        
+        
+        for i in 0..values.len(){
+            let mut values_removed = values.clone();
+            values_removed.remove(i);
+            if is_safe(&values_removed){
+                valid_lines_count += 1;
+                break;
+            }
+        }
+    }
+    println!("{}", valid_lines_count);
 }
 
 fn main(){
     part_1();
-    //part_2();
+    part_2();
 }
