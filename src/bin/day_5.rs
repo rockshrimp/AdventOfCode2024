@@ -62,12 +62,69 @@ fn part_1(){
     println!("{:?}", middle_pages.iter().sum::<i32>());
 }
 
+fn rearrange_update(update: Vec<String>, rules: &HashMap<String, Vec<String>>) -> Vec<String>{
+    let mut rearranged_update: Vec<String> = update;
+
+    for i in 0..rearranged_update.len(){
+        for _ in i + 1..rearranged_update.len(){
+            if rules.get(&rearranged_update[i]).is_some(){
+                // Swap element at index i with the one that should be before it
+                for rule in rules.get(&rearranged_update[i]).unwrap(){
+                    if rearranged_update[i..].contains(rule){
+                        let dependency_idx = rearranged_update.iter().position(|r| r == rule).unwrap();
+                        rearranged_update.swap(i, dependency_idx);
+                    }
+                }
+            }else {
+                break;
+            }
+        }
+    }
+    //println!("{:?} rearranged_update", rearranged_update);
+    return rearranged_update;
+}
+
 fn part_2(){
     let input = "input.txt";
     let lines = read_lines(&input);
+
+    let mut rules: HashMap<String, Vec<String>> = HashMap::new();
+    let mut updates: Vec<Vec<String>> = Vec::new();
+
+    parse_input(lines, &mut rules, &mut updates);
+
+    let mut middle_pages = Vec::new();
+    for update in updates{
+        //println!("{:?}", update);
+
+        let mut update_impossible = false;
+        for (i, page) in update[.. update.len() - 1].iter().enumerate(){
+            if rules.get(page).is_none(){
+                continue;
+            }else{
+                for rule in rules.get(page).unwrap(){
+                    if update[i + 1..].contains(rule){
+                        //println!("{:?} cannot update because {} is before {}", update, rule, page);
+                        update_impossible = true;
+                        break;
+                    }
+                }
+            }
+            if update_impossible{
+                break;
+            }
+        }
+        if update_impossible{
+            let rearranged_update = rearrange_update(update, &rules);
+            let middle_index: usize = rearranged_update.len() / 2;
+            middle_pages.push(rearranged_update[middle_index].parse::<i32>().unwrap());
+            
+        }
+    }
+    println!("{:?}", middle_pages.iter().sum::<i32>());
 }
 
 fn main(){
-    part_1();
-    //part_2();
+    //part_1();
+    part_2();
 }
