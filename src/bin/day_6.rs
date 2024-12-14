@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use advent_of_code_2024::{add_coordinates, coordinates_in_bounds, read_lines, DOWN, LEFT, RIGHT, UP};
+use advent_of_code_2024::*;
 
 fn find_start_position(lines: &Vec<Vec<char>>) -> (i32, i32){
     for (i, line) in lines.iter().enumerate(){
@@ -22,9 +22,9 @@ fn part_1(){
     let mut current_position = find_start_position(&lines);
 
     let mut direction = UP;
-    let mut visited:HashSet<(i32, i32)> = HashSet::from([current_position]);
+    let mut visited:HashSet<Position> = HashSet::from([current_position]);
 
-    let direction_change: HashMap<(i32, i32), (i32, i32)> = HashMap::from(
+    let direction_change: HashMap<Position, Position> = HashMap::from(
         [(UP, RIGHT), (RIGHT, DOWN), (DOWN, LEFT), (LEFT, UP)]
     );
 
