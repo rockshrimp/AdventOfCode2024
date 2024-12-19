@@ -1,4 +1,7 @@
+use std::collections::HashSet;
+
 use advent_of_code_2024::read_lines;
+use itertools::Chunks;
 
 fn loop_condition(is_odd: bool, left:usize, right:usize) -> bool{
     if is_odd{
@@ -7,7 +10,6 @@ fn loop_condition(is_odd: bool, left:usize, right:usize) -> bool{
         return left <= right;
     }
 }
-
 
 fn part_1(){
     let input = "input.txt";
@@ -71,7 +73,6 @@ fn part_1(){
             left += 1;
             right -= 1;
             //i += 1;
-
         }
         //println!("{} {} {}", sum, left, right);
     }
@@ -79,6 +80,58 @@ fn part_1(){
     println!("{}", sum);
 }
 
+#[derive(Debug)]
+struct Block{
+    is_file: bool,
+    file_index: usize,
+    length: usize,
+    starting_index: usize
+} 
+
+fn part_2(){
+    let input = "input.txt";
+    let line: Vec<usize> = read_lines(&input)[0].chars().map(|c| c.to_digit(10).unwrap() as usize).collect();
+    let mut blocks = Vec::new();
+
+    let mut starting_idx = 0;
+    for (idx, val) in line.iter().enumerate(){
+        if idx % 2 == 0{
+            blocks.push(Block{is_file: true, file_index:idx / 2, length: *val,starting_index: starting_idx});
+        }else{
+            blocks.push(Block{is_file: false, file_index:0, length: *val,starting_index: starting_idx});
+        }
+        starting_idx += val;
+    }
+
+    for file_idx in (0..blocks.len()).step_by(2).rev(){
+        let file_len = blocks[file_idx].length;
+        for free_space_idx in (1..file_idx).step_by(2){
+            //Found space for file
+            if blocks[free_space_idx].length as usize >= file_len{
+                blocks[file_idx].starting_index = blocks[free_space_idx].starting_index;
+                blocks[free_space_idx].starting_index += file_len;
+                blocks[free_space_idx].length -= file_len;
+
+                break;
+            }
+        }
+    }
+    
+    let mut checksum:i64 = 0;
+    for block in blocks{
+        if block.is_file == true{
+            let starting_idx = block.starting_index;
+            let len = block.length;
+            //println!("{:?}", file);
+            for i in starting_idx..starting_idx + len{
+                checksum += (block.file_index * i) as i64;
+            }
+        }
+    }
+    
+    println!("{:?}", checksum);
+}
 fn main(){
-    part_1();
+    //part_1();
+    part_2();
 }
