@@ -15,6 +15,14 @@ pub fn substract_coordinates(pos_a: Position, pos_b:Position) -> Position{
     return (pos_a.0 - pos_b.0, pos_a.1 - pos_b.1);
 }
 
+pub fn get_neighbours(pos: Position) -> Vec<Position>{
+    let mut neighbours = Vec::new();
+    for dir in vec![UP, DOWN, LEFT, RIGHT]{
+        neighbours.push(add_coordinates(pos, dir));
+    }
+    return neighbours;
+}
+
 pub fn coordinates_in_bounds(width: i32, height: i32, pos: Position) -> bool{
     let (x, y)= pos;
     if x < 0 || x >= height{
