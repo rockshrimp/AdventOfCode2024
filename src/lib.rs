@@ -7,6 +7,11 @@ pub const DOWN: Position = (1, 0);
 pub const LEFT: Position = (0, -1);
 pub const RIGHT: Position = (0, 1);
 
+pub const UP_RIGHT: Position = (-1, 1);
+pub const UP_LEFT: Position = (-1, -1);
+pub const DOWN_RIGHT: Position = (1, 1);
+pub const DOWN_LEFT: Position = (1, -1);
+
 pub fn add_coordinates(pos_a: Position, pos_b:Position) -> Position{
     return (pos_a.0 + pos_b.0, pos_a.1 + pos_b.1);
 }
@@ -18,6 +23,14 @@ pub fn substract_coordinates(pos_a: Position, pos_b:Position) -> Position{
 pub fn get_neighbours(pos: Position) -> Vec<Position>{
     let mut neighbours = Vec::new();
     for dir in vec![UP, DOWN, LEFT, RIGHT]{
+        neighbours.push(add_coordinates(pos, dir));
+    }
+    return neighbours;
+}
+
+pub fn get_neighbours_diagonal(pos: Position) -> Vec<Position>{
+    let mut neighbours = Vec::new();
+    for dir in vec![UP, DOWN, LEFT, RIGHT, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT]{
         neighbours.push(add_coordinates(pos, dir));
     }
     return neighbours;
