@@ -46,8 +46,37 @@ fn part_1(input: &str) -> isize{
 }
 
 
-fn part_2(input: &str) -> usize{
-    return 0;
+fn part_2(input: &str) -> isize{ 
+    let re: Regex = Regex::new(r"X.(\d+), Y.(\d+)").unwrap();
+
+    let mut button_a: (isize, isize) = (0, 0);
+    let mut button_b: (isize, isize) = (0, 0);
+    let mut prize: (isize, isize) = (0, 0);
+
+    let mut token_count: isize = 0;
+
+    for (idx, (_, [x, y])) in re.captures_iter(input).map(|c| c.extract()).enumerate() {
+        let values = (x.parse().unwrap(), y.parse().unwrap());
+        //println!("{:?}", values);
+        match idx % 3{
+            0 => button_a = values,
+            1 => button_b = values,
+            2 => prize = (values.0 + 10000000000000, values.1 + 10000000000000),
+            _ => ()
+        }
+
+        if idx % 3 == 2 {
+            match solve(button_a, button_b, prize){
+                Some((a_count, b_count)) =>{
+                    //println!("a: {} b: {}", a_count, b_count);
+                    token_count += a_count * 3 + b_count;
+                },
+                _ => ()
+            }
+            //println!("{}", token_count);
+        }
+    }
+    return token_count;
 }
 
 
@@ -56,13 +85,12 @@ fn main(){
     let input = read_to_string(filename).unwrap();   
 
     println!("{}", part_1(input.as_str()));
-    part_2(input.as_str());
+    println!("{}", part_2(input.as_str()));
 }
 
 #[cfg(test)]
 mod tests {
     use crate::part_1;
-    use crate::part_2;
 
     const TEST: &str = 
 "Button A: X+94, Y+34
@@ -80,7 +108,6 @@ Prize: X=7870, Y=6450
 Button A: X+69, Y+23
 Button B: X+27, Y+71
 Prize: X=18641, Y=10279";
-
 
      #[test]
     fn test_part_1_1() {
